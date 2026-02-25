@@ -1,0 +1,200 @@
+
+---------------------- Conceptos ----------------------------------- 
+
+Un cliente RESTful es una aplicación o sistema que interactúa con un servicio web RESTful (o API RESTful).
+
+En términos sencillos:
+
+Cliente: Es quien solicita información o realiza una acción. Podría ser:
+
+    - Una aplicación móvil.
+
+    - Una aplicación web (por ejemplo, JavaScript en el navegador).
+
+    - Un programa de escritorio.
+
+    - Una herramienta de desarrollo (como Postman o una extensión de editor de código como REST Client).
+
+Servicio Web RESTful (o API RESTful): Es el sistema que tiene los recursos (datos) y responde a las solicitudes del cliente. RESTful: Significa que sigue los principios de diseño de la arquitectura REST (Representational State Transfer).
+
+El rol del cliente RESTful es enviar solicitudes (generalmente usando métodos HTTP como GET, POST, PUT, DELETE) al servidor, siguiendo las reglas de la API, y luego procesar la respuesta que el servidor le devuelve (a menudo en formato JSON o XML).
+
+La clave es que el cliente y el servidor son independientes y se comunican de forma sin estado (stateless), lo que significa que cada solicitud del cliente al servidor contiene toda la información necesaria para que el servidor la entienda y la complete.
+
+Callback : Una función callback es una función que se pasa como argumento a otra función para que se ejecute después, cuando termine una tarea (de forma síncrona o asíncrona).
+
+Sirve para manejar tareas que se ejecutan después de otra (p. ej. lecturas I/O, timers, respuestas HTTP).
+En Node es muy común el patrón "error-first" (err, data) => { ... }.
+Ejemplos:
+
+// callback simple (síncrono)
+function saludo(nombre, callback) {
+    cb('Hola ' + nombre);
+}
+saludo('Ana', mensaje => console.log(mensaje)); // imprime: Hola Ana
+
+// callback asíncrono
+setTimeout(() => {
+    console.log('Esto se ejecuta después de 1s');
+}, 1000);
+
+
+// patrón error-first (Node)
+const fs = require('fs');
+fs.readFile('archivo.txt', 'utf8', (err, data) => {
+    if (err) return console.error('Error:', err);
+    console.log('Contenido:', data);
+});
+
+En tu código, los callbacks son las funciones que pasas a app.get(...) y a app.listen(...): se ejecutan cuando llega una petición o cuando el servidor empieza a escuchar.
+
+
+-------------  Primeros pasos para la Instacion del entorno Backend -----------------------------
+
+En nuestro caso preparameos un entorno de ejecución para JavaScript  para crear servidores y APIs.
+
+Configuración del entorno:  Visual Studio Code, la terminal, y la instalacion de las siguientes herramientas:
+
+ Node.js. Es un entorno de ejecución de JavaScript de código abierto y multiplataforma que permite ejecutar código JavaScript fuera de un navegador, principalmente en el lado del servidor
+
+ Express: facilita la creación de rutas y el manejo del protocolo HTTP, permitiendo operaciones como GET, POST, PUT y DELETE de forma sencilla.
+
+
+Uso de Postman: Se introdujo Postman como un cliente HTTP para probar las APIs REST mediante peticiones a las URLs.
+
+Mongoose:   es una biblioteca de modelado de objetos (ODM) para MongoDB que funciona con Node.js, facilitando la interacción con bases de datos NoSQL. Permite definir esquemas de datos (estructuras de documentos) y proporciona herramientas para validar, construir consultas y simplificar las operaciones de creación, lectura, actualización y eliminación (CRUD). 
+
+Multer:   es un middleware para Node.js que se utiliza principalmente para gestionar la subida de archivos en aplicaciones web, ya que facilita el procesamiento de datos en formato multipart/form-data, permite a los desarrolladores configurar el almacenamiento de archivos, limitar el tamaño, filtrar los tipos de archivo y procesar múltiples archivos en una sola solicitud.
+
+Validator: La biblioteca validator se enfoca en la validación y saneamiento de cadenas, mientras que express-validator se basa en validator para crear middlewares específicos para el framework Express, lo que facilita la validación de parámetros de solicitud (como request.body, request.params, o query params.
+
+Nodemon: herramienta de línea de comandos que automatiza el desarrollo de aplicaciones Node.js al monitorear el directorio del proyecto y reiniciar automáticamente el servidor cuando se detectan cambios en los archivos.
+
+----------------  Creacion de primer proyecto con node -----------------------
+
+1 Dentro de la carpeta del proyecto
+npm init
+esto me va a permitr crear la configuracion basica del proyecto
+se completa las informaciones y eso genera el package.json
+
+2 se instala express
+dentro de la carpeta del proyecto
+npm install express@### --save (para que se instale solo en tu proyecto)
+
+3 se instala multer
+npm install multer@### --save
+
+4 se instala mongoose (esta nos permite trabajar mas facil con mongo db con operaciones a las bases de datos)
+npm install mongoose@#### --save
+
+5 se instala cors evita accesos cruzados entre dominio local y backend para que se puedan consultar
+npm install cors@### --save
+
+6 se instala validator  esta permite validar datos, comprobar emails, metodos, etc
+npm install validator@### --save
+
+7  se instala nodemon  es una herramienta que nos permite el servidor de node para no hacerlo manual, esto se usa en desarrollo no en produccion
+npm install nodemon@### --save
+
+
+----------------------Nodemon-----------------
+
+8 Configuracion de nodemon en el archivo Package.json exclusivo para node
+    se incluye "start" en script para arracar el servidor nodemon index.js el archivo va a estar refresacando cada vez que haya algun cambio en el o en cualquier de sus dependencias.
+    "scripts" en package.json es un objeto donde defines comandos cortos que puedes ejecutar con npm. Sirve para automatizar tareas del proyecto (iniciar el servidor, tests, builds, linters, etc.).
+
+        Puntos clave:
+
+        Cada propiedad es un nombre de script y su valor es el comando que se ejecutará.
+        Ejecutar un script: npm run <nombre>
+        El script llamado "start" es especial: puedes ejecutarlo con npm start (sin "run").
+        Ejemplo en tu package.json:
+
+        "start": "nodemon index.js" — al ejecutar npm start se lanzará nodemon index.js.
+        Agregar/usar:
+
+        Para añadir: en "scripts" p.ej. "test": "jest"
+        Ejecutar: npm run test
+        Eso es todo: es un atajo para comandos repetitivos del proyecto.
+
+9 Generamos el index.js en la carpeta raiz, en este caso la capeta Aprender Node
+
+10 en el index.js hacemos un console.log guarda para comprobar 
+
+11 en la consola hacemos npm start, y podemos ver como la consola se queda escuchando, es como un watcher del archivo
+
+
+
+--------------------------Creando un servidor de node--------------
+12.0 Pasamos al archivo index.js con los pasos hasta el punto 20
+
+
+
+
+
+-------------- Estructura de carpetas --------------------------------
+
+Aprender Node/
+├─ node_modules/        # dependencias instaladas por npm
+├─ database/            # conexión a la BD y configuración de mongoose
+│  └─ connection.js
+├─ models/              # esquemas / modelos de Mongoose (User.js, Course.js, ...)
+├─ controllers/         # lógica de negocio por recurso (controllers para rutas)
+├─ routes/              # definiciones de rutas (api endpoints)
+├─ middlewares/         # middlewares personalizados (auth, error handler, etc.)
+├─ uploads/             # archivos subidos (imagenes, pdfs) — carpeta pública o protegida
+├─ public/              # archivos estáticos (html, css, js del cliente)
+├─ config/              # configuración (puertos, variables, constantes)
+├─ utils/               # utilidades/funciones auxiliares
+├─ tests/               # pruebas unitarias / integradas
+├─ .env                 # variables de entorno (no subir a git)
+├─ .gitignore
+├─ index.js             # punto de entrada / servidor Express (tu archivo actual)
+├─ package.json         # dependencias y scripts (npm start -> nodemon)
+├─ README.md
+└─ notas-introductorias  # tus apuntes (ya está en tu proyecto)
+
+
+Elemento,Propósito Principal,Rol en la Aplicación
+
+node_modules/,Almacenamiento de dependencias externas.,"Contiene todo el código de las bibliotecas y paquetes que tu proyecto necesita (Mongoose, Express, etc.). Es gestionado por npm o yarn. Nunca se sube al repositorio (se ignora con .gitignore)."
+
+database/connection.js,Conexión a la base de datos.,"Contiene la lógica para inicializar y establecer la conexión con el servidor de MongoDB (utilizando Mongoose). Al centralizar esto, es fácil cambiar o configurar la base de datos en un solo lugar."
+
+models/,Define la estructura de los datos.,"Aquí defines los Esquemas de Mongoose que dictan la forma, tipos de datos y validaciones de los documentos que se guardarán en las colecciones de MongoDB. Actúan como la interfaz de datos de la aplicación."
+
+controllers/,Contiene la lógica de negocio.,"Son las funciones que se ejecutan cuando se llama a una ruta. Manejan la solicitud (request), interactúan con los modelos para obtener o modificar datos, y envían la respuesta (response) al cliente."
+
+routes/,Define los endpoints de la API.,"Ficheros que asocian las rutas HTTP (p. ej., POST /api/users) con las funciones de los controladores. Desacopla la definición de la URL de la lógica de negocio."
+
+middlewares/,Funciones que se ejecutan entre la solicitud y el controlador.,"Se usan para tareas que se repiten en muchas rutas: Autenticación (verificar un token JWT), Validación (confirmar que los datos de entrada son correctos), manejo de CORS, o formateo de errores."
+
+uploads/,Almacenamiento temporal de archivos.,"Carpeta donde el middleware como Multer guarda los archivos (imágenes, documentos, etc.) que los usuarios suben a la API antes de ser procesados o movidos a un almacenamiento permanente (como un servicio de nube)."
+
+public/,Servir archivos estáticos.,"Contiene archivos que no requieren procesamiento dinámico por el servidor (HTML, CSS, imágenes o scripts de frontend). Express los sirve directamente al cliente."
+
+config/,Parámetros de configuración.,"Archivos que contienen configuraciones no secretas, como el puerto del servidor, URLs de servicios externos, configuración de loggers o ajustes de Mongoose. Centraliza la configuración global."
+
+utils/,Funciones de ayuda reutilizables.,"Contiene pequeñas funciones que resuelven tareas comunes y genéricas (p. ej., formatear fechas, sanitizar cadenas de texto, generar hashes, etc.) que pueden ser usadas por cualquier parte de la aplicación (controladores, middlewares, etc.)."
+
+tests/,Pruebas automatizadas.,"Aloja los scripts de prueba (unitarias, de integración o funcionales) que garantizan que el código funciona como se espera y evitan la introducción de errores al hacer cambios."
+
+.env,Variables de entorno (secretos).,"Almacena información sensible que varía según el entorno (desarrollo, producción), como claves de bases de datos, claves de APIs, y JWT secrets. Es crucial que este archivo no se suba al repositorio público."
+
+index.js (o app.js),El punto de entrada de la aplicación.,Es el archivo principal que: 1) Arranca el servidor Express. 2) Llama a la función de conexión a la DB. 3) Aplica middlewares globales. 4) Carga y monta las rutas.
+
+package.json,Metadatos del proyecto y dependencias.,"Define el nombre, versión y autor del proyecto. Lo más importante: lista las dependencias (dependencies y devDependencies) y los scripts de ejecución (p. ej., npm start, npm test)."
+
+
+
+---------comandos que se usan para iniciar el proyecto cada vez que lo abrimos----
+
+ nos vamos a la carpeta donde tenemos instalado 
+
+ Program Files/MongoDB/Server/8.2/bin 
+
+  ejecutamos el comando  
+
+   mongod.exe --dbpath "C:/data/db"   
+   
+   esto inicia el servidor de MongoDB.
