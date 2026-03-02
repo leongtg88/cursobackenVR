@@ -1,3 +1,6 @@
+//78. Creamos dos dependencias para trabajar con archivos, fs (file system) y path, estas nos van a permitir trabajar con archivos en nuestro servidor, para subir archivos a nuestro backend y luego poder acceder a ellos desde el frontend, por ejemplo para mostrar las imagenes de los proyectos que hemos subido. Estas dos dependencias ya vienen con nodejs, no es necesario instalarlas, solo importarlas en el controlador para poder usarlas en la accion de subida de archivos.
+const fs = require("fs");
+const path = require("path");
 // 34.El controlador se encarga de gestionar las peticiones y respuestas, tiene una seria de acciones, validar datos, devolver objetos o un html, recibir datos del usuario y devolverlos. Cada controlador seran mini acciones. Debemos importar el modelo para poder usarlo en las acciones.
 
 const Project = require("../models/projects.js");
@@ -138,7 +141,7 @@ const deleteProject = (req, res) => {
 
 //71 Ahora vamos a actualizar una accion
 const update = (req, res) => {
-  //73 debemos sacar los datos que llegan de la petcion, comprobat si no estan vacios y luego ejecutar un metodo findbyidAndupdate para actualizar en base al id del objeto
+  //73 debemos sacar los datos que llegan de la petcion, comprobat si no estan vacios y luego ejecut ar un metodo findbyidAndupdate para actualizar en base al id del objeto
 
   const id = req.params.id; // tomar id de la URL
   const updateData = req.body; // campos a actualizar
@@ -149,7 +152,7 @@ const update = (req, res) => {
       message: "No has enviado datos para actualizar",
     });
   }
-  Project.findByIdAndUpdate(id, updateData, { new: true })
+  Project.findByIdAndUpdate({_id: id},{image: req.file.filename}, { new: true})
     .then((projectUpdate) => {
       if (!projectUpdate) {
         return res.status(404).send({
@@ -174,12 +177,97 @@ const update = (req, res) => {
 };
 //77 Con esto podemos definir que es lo que vamos a hacer con la imgen que recibimos
 const upload = (req, res) => {
-  return res.status(200).send({
-    status: "succes",
-    message: "metodo de subida",
-    file: req.file,
-  });
+  
+  //79. Saco el identificador del proyecto de la URL, luego compruebo si se ha subido un archivo con req.file, si no se ha subido ningun archivo devuelvo un error 400 bad request, si se ha subido un archivo entonces devuelvo una respuesta de exito con el nombre del archivo que se ha subido. En caso de que sepas lo que vas a enviar entonces usa json en lugar de send para enviar un objeto con la informacion del archivo subido, esto es importante para que el frontend pueda procesar la respuesta de manera correcta.
+  let id = req.params.id;
+  if (!req.file) {
+    return res.status(400).json({
+      status: "error",
+      message: "No se ha subido ninguna imagen",
+    });
+  }
+
+  //80. Vamos a sacar la ruta del archivo subido y comprobar la extensión.
+  // Guardamos filePath para poder borrar el archivo si hay algún problema.
+  const filePath = req.file.path;
+  const extension = path.extname(req.file.originalname).toLocaleLowerCase().replace(".", ""); //sacar la extensión del archivo y convertirla a minúscula para validar, esto es importante porque las extensiones pueden venir en mayúscula o minúscula y queremos validar de manera correcta. El replace es para quitar el punto que viene en la extensión, por ejemplo .jpg se convierte en jpg, esto es importante para validar de manera correcta la extensión.
+
+  //81. validar la extensióntoLowerCase();
+  //81. validar la extensión
+  const validExtensions = ["jpg", "jpeg", "png", "gif"];
+  if (!validExtensions.includes(extension)) {
+    // eliminar el archivo subido
+    fs.unlinkSync(filePath);
+    return res.status(400).json({
+      status: "error",
+      message: "La extension no es valida",
+    });
+  }
+//82. Si la extension es valida entonces actualizamos el proyecto en la base de datos.
+  // Primero consultamos el proyecto para conservar el nombre de la imagen anterior.
+  Project.findById(id)
+    .then((projectBefore) => {
+      if (!projectBefore) {
+        fs.unlinkSync(filePath);
+        return res.status(404).send({
+          status: "error",
+          message: "No se ha encontrado ningún proyecto con ese id",
+        });
+      }
+
+      const oldImage = projectBefore.image;
+      projectBefore.image = req.file.filename;
+
+      return projectBefore.save().then((projectUpdate) => {
+        //84. borrar imagen anterior si existe y no es la default
+        if (oldImage && oldImage !== "default.png") {
+          const oldImagePath = "./uploads/images/" + oldImage;
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        }
+
+        return res.status(200).send({
+          status: "success",
+          project: projectUpdate,
+          newFile: req.file.filename,
+        });
+      });
+    })
+    .catch((error) => {
+      // eliminar el archivo subido en caso de error en la consulta/guardado
+      fs.unlinkSync(filePath);
+      console.error("Error al actualizar:", error);
+      return res.status(500).send({
+        status: "error",
+        message: "Error al actualizar el proyecto",
+        error: error.message,
+      });
+    });
 };
+
+//85. Ahora haremos una accion para sacar una imagen del proyecto, esto lo haremos con una ruta get que reciba el nombre de la imagen por la URL, luego con fs y path sacamos la ruta de la imagen en el servidor y la devolvemos al cliente. Esto es importante para poder mostrar las imagenes de los proyectos en el frontend. Esta accion se puede hacer en un nuevo controlador o en este mismo controlador, lo importante es que tenga su propia ruta para poder acceder a ella desde el frontend.
+const getImage = (req, res) => {
+    //Sacar el nombre del archivo
+    let file = req.params.filename;
+    //Construir la ruta del archivo
+    let filePath = "./uploads/images/" + file;
+    //Comprobar si el archivo existe
+  fs.stat(filePath, (err, exists) => {  
+
+    if(!err && exists){
+        return res.sendFile(path.resolve(filePath));
+        }
+        else{
+    //devolver respuesta
+    return res.status(404).send({
+        status: "error",
+        message: "No se ha encontrado la imagen del proyecto",
+        
+    });
+  }
+  });  
+}
 
 //36.De esta manera temos un metodo save que devuelve un mensaje de prueba. Ahora debemos exportar el controlador para poder usarlo en las rutas. Esto lo hacemos haciendo un lo siguiente:
 
@@ -191,6 +279,7 @@ module.exports = {
   deleteProject,
   update,
   upload,
+  getImage
 };
 //37.Con esto ya tenemos el controlador listo para ser usado en las rutas. Dentro de la carpeta de rutas, crearemos un archivo llamado porject.js donde definieremos las rutas para los proyectos.
 

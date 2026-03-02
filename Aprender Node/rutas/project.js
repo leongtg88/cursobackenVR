@@ -34,6 +34,8 @@ router.delete("/delete/:id", ProjectController.deleteProject);
 router.put("/update/:id", ProjectController.update);
 //76 Ruta de Multer ---- paso antes o despues de este es crear la accion del controlador
 router.put("/upload/:id", upload.single("file0"), ProjectController.upload);
+//82 Ruta para sacar la imagen del proyecto
+router.get("/image/:filename", ProjectController.getImage);
 
 //40. Exportar las rutas
 module.exports = router;

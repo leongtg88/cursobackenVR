@@ -72,7 +72,7 @@ console.log("Se ha ejecutado mi endpoint de prueba");
             <h2>con mi profe Victor</h2>
             <p>Esto es una prueba de una ruta</p>
         </section>
-    `);                                                 // 18. ya con esto podemos escribir en el navegador localhost:3977/pruebitas y ver el resultado
+    `);  // 18. ya con esto podemos escribir en el navegador localhost:3977/pruebitas y ver el resultado
 
 });
 
