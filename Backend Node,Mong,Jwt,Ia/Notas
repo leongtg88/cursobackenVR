@@ -1,0 +1,31 @@
+Instalacion de este proyecto:
+1.npm install
+2. npm install --save bcrytjs (el --save es para que se guarde en el proyecto y no globalmente), nos va a permitit enpritar contraseñas.
+3. npm install --save cors esto nos va a permitir el acceso entre dominios hacer peticiones ajax de un frontend a un backend y que no se bloqueen esas peticiones
+4. npm install --save express es el framework http que nos permite gestionar los metodos, get, pos, push, crear un servidor web y definir rutas para manejar las peticiones.
+5. npm --save jwt-simple es una libreria que nos va a permitir los tokens de jwt
+6. npm install --save mongoose es un odm que nos permite tener una base de datos de mongodb
+7. npm install --save mongoose-paginate-v2
+8. npm install --save multer una libreria para subir ficheros a nuestro backend
+9. npm install --save validator un validador cualqquier informacion dque nos llegue de un usuario
+10. npm install --save openai nos permite conectarnos a los servicios y hacer consultas 
+11. npm install --save-dev nodemon nos permite actualizar nuestro servidor  cuando hacemos cambios en nuestro codigo (el dev es para desarrollo, en produccion no va a correr)
+
+12. En el package.json incluimos en script "start": "node index.js" 
+13. Para arrancar el proyecto, en la terminal escribimos npm start, pero antes de eso tenemos que arrancar el servidor de mongodb, para eso vamos a crear un archivo llamado arrancar-proyecto.bat con el siguiente contenido: start cmd.exe /k "cd C:\Program Files\MongoDB\Server\8.2\bin && mongod.exe --dbpath C:\data\db"
+start cmd.exe /k "cd C:\wamp64\www\\Desktop\Backend Node,Mong,Jwt,Ia && npm start".
+14. Importamos dependencias de expres y cors
+15. Creamos un folder que se llame database con un archivo conecction.js 
+16. En el archivo connection.js importamos mongoose y hacemos la conexion a la base de datos, para eso necesitamos la url de conexion, que es mongodb://localhost:27017/nombre-de-la-base-de-datos. Se hace un try catch y un await 
+17. Conectarnos a mongodb
+18. Exportamos la funcion
+19. Imortamos la funcion de connection en el archivo index.js para conectarse a la base de datos
+20. Crear el servidor de node
+21. Configurar el cors
+22. Converir los datos del body a objetos de js
+23. Creamos una ruta de prueba(porque tenemos que crear las rutas, pero tendriamos que crear los controladores primero, entonces hacemos una prueba de momento)
+24. Poner a escuchar el servidor 
+25. Creacion de Folder "controllers", aqui vamos a tener todos los controladores de mi aplicacion, en donde tendremos 2 entidades, 1 de usuarios y otra de articulos.
+26. Creacion de archivo user.js, tendremos los metodos para registrar al usuario, sacar lo datos del perfil, subir la imagen de perfil etc, hacer peticiones, consultar y consumir.
+28. Acciones como registrar el usuario, identidicar, ver los datos, editar y actualiazar, subir y descargar imagenes.
+29. Exportacion de los metodos
